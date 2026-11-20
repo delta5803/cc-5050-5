@@ -1,4 +1,6 @@
 # solo-manager GitHub sync ignores
+out/
+.bootstrap/
 node_modules/
 vendor/
 dist/

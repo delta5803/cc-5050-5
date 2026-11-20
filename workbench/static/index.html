@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>字体子集排版工作台</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>字体子集排版工作台</h1>
+  <p class="sub">选择开放许可字体与排版功能，对比两种裁剪方案；渲染由服务端独立整形（HarfBuzz）与绘制（轮廓→SVG）完成，不经过系统字体回退。</p>
+</header>
+
+<section id="controls">
+  <div class="row">
+    <label>字体
+      <select id="font-select"></select>
+    </label>
+    <span id="font-meta" class="meta"></span>
+  </div>
+  <div class="row">
+    <fieldset>
+      <legend>排版功能（GSUB 替换）</legend>
+      <div id="gsub-features" class="feature-grid"></div>
+    </fieldset>
+    <fieldset>
+      <legend>排版功能（GPOS 定位）</legend>
+      <div id="gpos-features" class="feature-grid"></div>
+    </fieldset>
+  </div>
+  <div class="row">
+    <label>文字方向
+      <select id="direction">
+        <option value="auto">自动（按样本内容）</option>
+        <option value="ltr">从左到右</option>
+        <option value="rtl">从右到左</option>
+      </select>
+    </label>
+    <label>体积限制（KB，0 = 不限）
+      <input id="size-limit" type="number" min="0" value="0" style="width:6em">
+    </label>
+  </div>
+  <div class="row corpus-row">
+    <label>训练语料（每行一个样本）
+      <textarea id="corpus" rows="7" spellcheck="false"></textarea>
+      <ul id="corpus-notes" class="notes"></ul>
+    </label>
+    <label>预留测试组合（不进入语料，只用于检验）
+      <textarea id="heldout" rows="4" spellcheck="false"></textarea>
+      <ul id="heldout-notes" class="notes"></ul>
+    </label>
+  </div>
+  <div class="row">
+    <button id="build-btn">构建候选子集</button>
+    <span id="build-status" class="meta"></span>
+  </div>
+</section>
+
+<section id="conflict" class="hidden"></section>
+<section id="warnings" class="hidden"></section>
+
+<section id="results" class="hidden">
+  <h2>两种裁剪方案对比</h2>
+  <table id="overview">
+    <thead>
+      <tr><th></th><th>原版字体</th><th id="ov-a-name"></th><th id="ov-b-name"></th></tr>
+    </thead>
+    <tbody>
+      <tr><th>字形数</th><td id="ov-orig-glyphs"></td><td id="ov-a-glyphs"></td><td id="ov-b-glyphs"></td></tr>
+      <tr><th>TTF 体积</th><td id="ov-orig-size"></td><td id="ov-a-size"></td><td id="ov-b-size"></td></tr>
+      <tr><th>WOFF2 体积</th><td>—</td><td id="ov-a-woff2"></td><td id="ov-b-woff2"></td></tr>
+      <tr><th>样本一致性</th><td>—</td><td id="ov-a-match"></td><td id="ov-b-match"></td></tr>
+      <tr><th>下载</th><td>—</td><td id="ov-a-dl"></td><td id="ov-b-dl"></td></tr>
+    </tbody>
+  </table>
+
+  <h2>样本渲染（原版 / 方案 A / 方案 B）</h2>
+  <div id="sample-rows"></div>
+
+  <h2>核对</h2>
+  <div class="verify-cols">
+    <div id="verify-a" class="verify-panel"></div>
+    <div id="verify-b" class="verify-panel"></div>
+  </div>
+
+  <h2>字形清单（点击字形查看它因何被留下）</h2>
+  <div class="inventory-cols">
+    <div>
+      <h3 id="inv-a-title"></h3>
+      <div id="inventory-a" class="inventory"></div>
+    </div>
+    <div>
+      <h3 id="inv-b-title"></h3>
+      <div id="inventory-b" class="inventory"></div>
+    </div>
+    <aside id="inspector" class="hidden">
+      <h3>字形检查器</h3>
+      <div id="inspector-body"></div>
+    </aside>
+  </div>
+</section>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
